@@ -118,17 +118,52 @@ for (i in 1:length(subfolders)) {
   } else {
     hourly <- NULL
   }
+
+  # hydrowork
+  hydro_file <- find_datasheet(files,"(H|h)ydrowork")
+  if (length(hydro_file) == 1) {
+    hydro <- try(read_hydrocast(file.path(root_folder,"SHIPDATA",hydro_file)))
+    if(inherits(hydro,"try-error")) {
+      warning("Hydrowork file cannot be opened. Returning NULL dataset.")
+      hydro <- NULL
+    }
+  } else {
+    hyrdo <- NULL
+  }
+
+  # Nueston
+  neuston_file <- find_datasheet(files,"(N|n)euston")
+  if (length(neuston_file) == 1) {
+    neuston <- try(sea::read_neuston(file.path(root_folder,"SHIPDATA",neuston_file)))
+    if(inherits(neuston,"try-error")) {
+      warning("Neuston file cannot be opened. Returning NULL dataset.")
+      neuston <- NULL
+    }
+  } else {
+    neuston <- NULL
+  }
+
+  # surfsamp
+  surf_file <- find_datasheet(files,"(S|s)urf")
+  if (length(neuston_file) == 1) {
+    surf <- try(sea::read_surfsamp(file.path(root_folder,"SHIPDATA",surf_file)))
+    if(inherits(surf,"try-error")) {
+      warning("Surfsamp file cannot be opened. Returning NULL dataset.")
+      surf <- NULL
+    }
+  } else {
+    surf <- NULL
+  }
 #
 #   if (i == 8) {
 #     ii <- which.min(hourly$lat)
 #     hourly$lat[1:ii] <- -hourly$lat[1:ii]
 #   }
 
-  if(!is.null(hourly)) {
-    a$hourly <- hourly
-  } else {
-    a$hourly <- NULL
-  }
+  a$hourly <- hourly
+  a$neuston <- neuston
+  a$surf <- surf
+  a$hydro <- hydro
 
   assign(subfolders[i],a)
 
